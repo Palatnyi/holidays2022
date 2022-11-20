@@ -1,0 +1,31 @@
+{
+  "name": "holidays_2022",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon -r dotenv/config index.js dotenv_config_path=./.envlocal",
+    "prod": "node -r dotenv/config index.js dotenv_config_path=./.env",
+    "test": "mocha ./flightActivityTracker.spec.js -r dotenv/config dotenv_config_path=./.envlocal"
+
+  },
+  "type": "module",
+  "engines": {
+    "node": "16"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "lodash": "^4.17.21",
+    "mongodb": "^4.12.0",
+    "node-color-log": "^10.0.2",
+    "node-cron": "^3.0.2",
+    "node-telegram-bot-api": "^0.60.0",
+    "dotenv": "^16.0.1",
+    "mocha": "^10.0.0",
+    "sinon": "^14.0.0",
+    "uuid": "^8.3.2"
+  }
+}
