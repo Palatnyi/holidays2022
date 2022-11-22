@@ -44,7 +44,7 @@ app.use(async (req, res, next) => {
 
 app.post('/dedrone', async (req, res) => {
   let alertId = _.get(req, 'body.data.alertId');
-
+  
   if (!alertId) {
     logger.info(`push message does not contain alertId`);
     res.status(428).send('"alertId" field is required');
