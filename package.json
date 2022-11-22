@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "nodemon -r dotenv/config index.js dotenv_config_path=./.envlocal",
     "prod": "node -r dotenv/config index.js dotenv_config_path=./.env",
-    "test": "mocha ./flightActivityTracker.spec.js -r dotenv/config dotenv_config_path=./.envlocal"
-
+    "test": "mocha --timeout 10000 ./flightActivityTracker.spec.js -r dotenv/config dotenv_config_path=./.envlocal"
   },
   "type": "module",
   "engines": {
@@ -16,15 +15,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.27.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
     "express": "^4.18.2",
     "lodash": "^4.17.21",
+    "mocha": "^10.0.0",
     "mongodb": "^4.12.0",
     "node-color-log": "^10.0.2",
     "node-cron": "^3.0.2",
     "node-telegram-bot-api": "^0.60.0",
-    "dotenv": "^16.0.1",
-    "mocha": "^10.0.0",
     "sinon": "^14.0.0",
     "uuid": "^8.3.2"
   }

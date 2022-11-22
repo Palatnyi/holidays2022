@@ -1,14 +1,21 @@
 import express from 'express';
 import _ from 'lodash';
 import cors from 'cors';
+import axios from 'axios';
 import logger from 'node-color-log'
-import FlighActivityTracker from './flightActivityTracker.js';
+import TelegramBot from 'node-telegram-bot-api';
 import { MongoClient, ServerApiVersion } from 'mongodb';
+import FlighActivityTracker from './flightActivityTracker.js';
 
 let dbCache = {};
 const PORT = 3000;
 const app = express();
-const flyTracker = new FlighActivityTracker();
+const bot = new TelegramBot(process.env.BOT_TOKEN);
+const axiosInstance = axios.create({
+  baseURL: 'https://dt.snitch.tk/api/1.0/',
+  headers: { 'Dedrone-Auth-Token': process.env.DEDRONE_AUTH_TOKEN }
+});
+const flyTracker = new FlighActivityTracker(bot, axiosInstance);
 
 const connectToMongo = async () => {
   if (dbCache.client) return Promise.resolve(dbCache);
@@ -29,20 +36,38 @@ const connectToMongo = async () => {
 
 app.use(express.json());
 app.use(cors({ origin: true }));
-app.use(async (req, res, next) => { 
+app.use(async (req, res, next) => {
   await connectToMongo();
   next();
 })
 
+
 app.post('/dedrone', async (req, res) => {
-  let data = _.get(req.body, 'data', { msg: 'noData' });
+  let alertId = _.get(req, 'body.data.alertId');
 
-  logger.info('new push event');
-  flyTracker.sendMessages(data);
-  
+  if (!alertId) {
+    logger.info(`push message does not contain alertId`);
+    res.status(428).send('"alertId" field is required');
+    return
+  }
 
-  res.send('<b>health: ok </b>');
+  const result = flyTracker.sendMessagesV2(alertId);
+  res.send({ result })
 });
+
+// app.post('/dedrone', async (req, res) => {
+//   let data = _.get(req.body, 'data', { msg: 'noData' });
+
+//   const { client } = dbCache;
+//   logger.info('new push event');
+//   await client.db('dedrone').collection('holidays2022test').insertOne({ ...req.body });
+//   return;
+
+//   flyTracker.sendMessages(data);
+
+
+//   res.send('<b>health: ok </b>');
+// });
 
 
 app.listen(PORT, async () => {
