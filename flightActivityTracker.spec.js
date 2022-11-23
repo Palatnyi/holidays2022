@@ -40,12 +40,12 @@ describe('FlightActivityTracker v2 test suite', () => {
     assert.equal(data, undefined);
   });
 
-  it('"findRemoteDevice" should find alert with REMOTE deviceType', async () => {
+  it('"findRemoteDevice" should find alert with REMOTE detectionType', async () => {
     const alert = {
       detections: [
         {
           identification: {
-            deviceType: 'remote'
+            detectionType: 'remote'
           }
         }
       ]
@@ -53,16 +53,16 @@ describe('FlightActivityTracker v2 test suite', () => {
 
     const remoteDevice = flt.findRemoteDevice(alert);
 
-    assert.equal(remoteDevice.identification.deviceType, 'remote');
+    assert.equal(remoteDevice.identification.detectionType, 'remote');
 
   });
 
-  it('"findRemoteDevice" should NOT find alert with REMOTE deviceType', async () => {
+  it('"findRemoteDevice" should NOT find alert with REMOTE detectionType', async () => {
     const alert = {
       detections: [
         {
           identification: {
-            deviceType: 'drone'
+            detectionType: 'drone'
           }
         }
       ]
@@ -75,20 +75,24 @@ describe('FlightActivityTracker v2 test suite', () => {
   });
 
 
-  it('"getFreshCoordinates" should return latest coordintes', () => {
+  it('"getPositionDetails" should return latest coordintes', () => {
     const positions = [{
+      timestamp: 123,
       geoLocation: {
         coordinates: [1, 2]
       }
     }, {
+      timestamp: 456,
       geoLocation: {
         coordinates: [3, 4]
       }
     }];
 
-    const freshCoordinates = flt.getFreshCoordinates(positions);
+    const { coordinates, timestamp } = flt.getPositionDetails(positions);
 
-    assert.deepEqual(freshCoordinates, [3, 4]);
+    assert.deepEqual(coordinates, [3, 4]);
+    assert.deepEqual(timestamp, 456);
+
   })
 
 
@@ -96,14 +100,14 @@ describe('FlightActivityTracker v2 test suite', () => {
     const alert = {
       summary: {
         sensors: [{
-          type: 'aeroscope'
+          sensorType: 'aeroscope'
         }]
       }
     };
 
     const aeroscopeData = flt.getAeroscopeSensorData(alert);
 
-    assert.equal(aeroscopeData.type, 'aeroscope');
+    assert.equal(aeroscopeData.sensorType, 'aeroscope');
   });
 
 
@@ -111,7 +115,7 @@ describe('FlightActivityTracker v2 test suite', () => {
     const alert = {
       summary: {
         sensors: [{
-          type: 'radio'
+          sensorType: 'radio'
         }]
       }
     };
@@ -132,12 +136,23 @@ describe('FlightActivityTracker v2 test suite', () => {
     }];
 
     const result = await flt.sendMessageToActivatedZone({
-      latitude, longitude, activatedZones
+      latitude, longitude, activatedZones, timestamp: Date.now(),
+      serialNumber: 4444, modelLabel: 'ololo'
     });
 
     assert.deepEqual(result, [
-      { chat_id: '-1001842709527', zone: 'PPV_Monitor' },
-      { chat_id: '-1001842709527', zone: 'Kinburg_Monitor' }
+      {
+        serialNumber: 4444,
+        modelLabel: 'ololo',
+        zone: 'PPV_Monitor',
+        chat_id: '-1001842709527',
+      },
+      {
+        serialNumber: 4444,
+        modelLabel: 'ololo',
+        zone: 'Kinburg_Monitor',
+        chat_id: '-1001842709527',
+      }
     ])
 
   });
