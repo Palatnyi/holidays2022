@@ -89,6 +89,7 @@ class FlightActivityTracker {
 
 
   sendMessagesV2 = async (alertId) => {
+    logger.bold().info(`new alert: ${alertId}`);
 
     const alert = await this.getAlertById(alertId);
     if (!alert) {
@@ -102,7 +103,7 @@ class FlightActivityTracker {
       return 'NO zones were affected';
     }
 
-    const remoteDevice = findRemoteDevice(alert);
+    const remoteDevice = this.findRemoteDevice(alert);
     if (!remoteDevice) {
       logger.info('alert does not contain remote device')
       return 'alert does not contain remote device';
@@ -127,7 +128,6 @@ class FlightActivityTracker {
     const result = await sendMessageToActivatedZone({ longitude, latitude, activatedZones });
 
     return result
-
 
   }
 
