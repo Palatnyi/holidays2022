@@ -5,11 +5,14 @@ console.log('ENV:', process.env.CURRENT_ENV);
 const chats_ids_to_zones = process.env.CURRENT_ENV === 'TEST' ? {
   'PPV_Monitor': -1001842709527,
   'Kinburg_Monitor': -1001842709527,
-  'OUR_Monitor_Herson': -1001842709527
+  'OUR_Monitor_Herson': -1001842709527, 
+  'OUR_Kryvyi_Rig': -1001842709527
+
 } : {
   'PPV_Monitor': process.env.PPV_MONITOR,
   'Kinburg_Monitor': process.env.KINGBURG_MONITOR,
   'OUR_Monitor_Herson': process.env.OUR_MONITOR_HERSON,
+  'OUR_Kryvyi_Rig': process.env.OUR_KRYVYI_RIG
 };
 
 
@@ -81,7 +84,7 @@ class FlightActivityTracker {
         try {
           await this._bot.sendMessage(
             chat_id,
-            `${label}: ${latitude} ${longitude} \n${time} \n${modelLabel  || ''} \n${serialNumber || ''}`
+            `${label}: ${latitude} ${longitude} \n${time} \n${modelLabel || ''} \n${serialNumber || ''}`
           )
 
           await this._bot.sendLocation(
