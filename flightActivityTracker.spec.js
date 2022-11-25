@@ -125,7 +125,7 @@ describe('FlightActivityTracker v2 test suite', () => {
     assert.equal(aeroscopeData, undefined);
   });
 
-  it('"sendMessageToActivatedZone" should return string - "" ', async () => {
+  it('"sendMessageToActivatedZone" should send messages to the all chatd from the activatedZone array "" ', async () => {
     const latitude = 4;
     const longitude = 5;
     const activatedZones = [{
@@ -133,6 +133,15 @@ describe('FlightActivityTracker v2 test suite', () => {
     },
     {
       label: 'Kinburg_Monitor'
+    }, {
+      label: 'OUR_Monitor_Herson'
+    },
+    {
+      label: 'OUR_Kryvyi_Rig'
+    }, {
+      label: 'Monitor_Herson'
+    }, {
+      label: 'Monitor_Kinburg'
     }];
 
     const result = await flt.sendMessageToActivatedZone({
