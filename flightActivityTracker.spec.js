@@ -125,7 +125,7 @@ describe('FlightActivityTracker v2 test suite', () => {
     assert.equal(aeroscopeData, undefined);
   });
 
-  it('"sendMessageToActivatedZone" should send messages to the all chatd from the activatedZone array "" ', async () => {
+  it('"sendMessageToActivatedZone" should send messages to the all chatd from the activatedZone array', async () => {
     const latitude = 4;
     const longitude = 5;
     const activatedZones = [{
@@ -160,6 +160,30 @@ describe('FlightActivityTracker v2 test suite', () => {
         serialNumber: 4444,
         modelLabel: 'ololo',
         zone: 'Kinburg_Monitor',
+        chat_id: '-1001842709527',
+      },
+      {
+        serialNumber: 4444,
+        modelLabel: 'ololo',
+        zone: 'OUR_Monitor_Herson',
+        chat_id: '-1001842709527',
+      },
+      {
+        serialNumber: 4444,
+        modelLabel: 'ololo',
+        zone: 'OUR_Kryvyi_Rig',
+        chat_id: '-1001842709527',
+      },
+      {
+        serialNumber: 4444,
+        modelLabel: 'ololo',
+        zone: 'Monitor_Herson',
+        chat_id: '-1001842709527',
+      },
+      {
+        serialNumber: 4444,
+        modelLabel: 'ololo',
+        zone: 'Monitor_Kinburg',
         chat_id: '-1001842709527',
       }
     ])

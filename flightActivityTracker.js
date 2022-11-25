@@ -6,7 +6,7 @@ const chats_ids_to_zones = process.env.CURRENT_ENV === 'TEST' ? {
   'PPV_Monitor': -1001842709527,
   'Kinburg_Monitor': -1001842709527,
   'OUR_Monitor_Herson': -1001842709527,
-  'OUR_Kryvyi_Rig': -1001842709527, 
+  'OUR_Kryvyi_Rig': -1001842709527,
   'Monitor_Herson': -1001842709527,
   'Monitor_Kinburg': -1001842709527
 } : {
@@ -48,7 +48,6 @@ class FlightActivityTracker {
     });
   }
 
-
   getPositionDetails = (positions) => {
 
     const lastPosition = _.chain(positions)
@@ -68,6 +67,18 @@ class FlightActivityTracker {
       .value()
   }
 
+  getReplyMarkup = ({ latitude, longitude }) => {
+    const reply_markup = [[
+      {
+        text: 'Переглянути у Гугл мапі',
+        url: `http://www.google.com/maps/place/${latitude},${longitude}`,
+        callback_data: 'ololo'
+      }
+    ]];
+
+    return reply_markup;
+  }
+
   sendMessageToActivatedZone = async ({
     latitude,
     longitude,
@@ -83,19 +94,15 @@ class FlightActivityTracker {
       const time = new Date(timestamp).toLocaleString('uk', { timeZone: 'Europe/Kiev' });
 
       if (chat_id) {
-
         try {
           await this._bot.sendMessage(
             chat_id,
-            `${label}: ${latitude} ${longitude} \n${time} \n${modelLabel || ''} \n${serialNumber || ''}`
+            `❗️❗️❗️\n <b>Виявлено оператора ворожого БПЛА</b>\n \nЧас: ${time} \nКординати: <b>${latitude} ${longitude}</b>  \nМодель: ${modelLabel || ''} \nСерійний номер: ${serialNumber || ''} \n Зона виявлення: ${label}`,
+            {
+              reply_markup: { inline_keyboard: this.getReplyMarkup({ longitude, latitude }) },
+              parse_mode: 'HTML'
+            }
           )
-
-          await this._bot.sendLocation(
-            chat_id,
-            latitude,
-            longitude, {
-            protect_content: true
-          });
 
           logger.info(`Coordinates sent to the chat - ${chat_id}`)
           result.push({
@@ -161,7 +168,6 @@ class FlightActivityTracker {
     const result = await this.sendMessageToActivatedZone({
       latitude,
       longitude,
-      timestamp,
       serialNumber,
       activatedZones,
       modelLabel: label
