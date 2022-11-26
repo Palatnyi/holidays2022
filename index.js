@@ -12,8 +12,8 @@ const PORT = 3000;
 const app = express();
 const bot = new TelegramBot(process.env.BOT_TOKEN);
 const axiosInstance = axios.create({
-  baseURL: 'https://dt.snitch.tk/api/1.0/',
-  headers: { 'Dedrone-Auth-Token': process.env.DEDRONE_AUTH_TOKEN }
+  baseURL: process.env.BASE_URL,
+  headers: { [process.env.AUTH_HEADER_KEY]: process.env.DEDRONE_AUTH_TOKEN }
 });
 const flyTracker = new FlighActivityTracker(bot, axiosInstance);
 

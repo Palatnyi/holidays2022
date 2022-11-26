@@ -97,7 +97,7 @@ class FlightActivityTracker {
         try {
           await this._bot.sendMessage(
             chat_id,
-            `❗️❗️❗️\n <b>Виявлено оператора ворожого БПЛА</b>\n \nЧас: ${time} \nКординати: <b>${latitude} ${longitude}</b>  \nМодель: ${modelLabel || ''} \nСерійний номер: ${serialNumber || ''} \n Зона виявлення: ${label}`,
+            `❗️❗️❗️\n <b>Виявлено оператора ворожого БПЛА</b>\n \nЧас: ${time} \nКординати: <b>${latitude} ${longitude}</b>  \nМодель: ${modelLabel || ''} \nСерійний номер: ${serialNumber || ''} \nЗона виявлення: ${label}`,
             {
               reply_markup: { inline_keyboard: this.getReplyMarkup({ longitude, latitude }) },
               parse_mode: 'HTML'
