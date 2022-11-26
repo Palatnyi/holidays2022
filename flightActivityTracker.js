@@ -113,7 +113,7 @@ class FlightActivityTracker {
           });
 
         } catch (err) {
-          logger.error(`Failed to send message to the zone: ${label}`);
+          logger.error(`Failed to send message to the zone: ${label}`);r
           console.log(err);
         }
 
@@ -168,6 +168,7 @@ class FlightActivityTracker {
     const result = await this.sendMessageToActivatedZone({
       latitude,
       longitude,
+      timestamp,
       serialNumber,
       activatedZones,
       modelLabel: label
