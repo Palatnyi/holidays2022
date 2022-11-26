@@ -113,7 +113,7 @@ class FlightActivityTracker {
           });
 
         } catch (err) {
-          logger.error(`Failed to send message to the zone: ${label}`);r
+          logger.error(`Failed to send message to the zone: ${label}`);
           console.log(err);
         }
 
