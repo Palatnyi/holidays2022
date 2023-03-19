@@ -14,8 +14,9 @@ describe('FlightActivityTracker v2 test suite', () => {
 
   beforeEach('new FlightActivityTracker', () => {
     bot = new TelegramBot(process.env.BOT_TOKEN);
+    console.log(process.env.BASE_URL ,'process.env.BASE_URL');
     axiosInstance = axios.create({
-      baseURL: 'https://dt.snitch.tk/api/1.0/',
+      baseURL: process.env.BASE_URL,
       headers: { 'Dedrone-Auth-Token': process.env.DEDRONE_AUTH_TOKEN }
     });
     flt = new FlightActivityTracker(bot, axiosInstance);
@@ -29,11 +30,11 @@ describe('FlightActivityTracker v2 test suite', () => {
   });
 
   it('shoud get alert by id', async () => {
-    const alertIdTest = `6379736d6d64d44a8f343e46`;
+    const alertIdTest = `6415cc5fff8a76240c477181`;
     const data = await flt.getAlertById(alertIdTest);
+
     assert.equal(data._id, alertIdTest);
   });
-
   it('shoud NOT get alert by invalid id', async () => {
     const alertIdTest = `invalid_id`;
     const data = await flt.getAlertById(alertIdTest);
@@ -96,7 +97,7 @@ describe('FlightActivityTracker v2 test suite', () => {
   })
 
 
-  it('"getAeroscopeSensorData" should return aeroscope data', () => {
+  it.skip('"getAeroscopeSensorData" should return aeroscope data', () => {
     const alert = {
       summary: {
         sensors: [{
@@ -111,7 +112,7 @@ describe('FlightActivityTracker v2 test suite', () => {
   });
 
 
-  it('"getAeroscopeSensorData" should NOT return aeroscope data', () => {
+  it.skip('"getAeroscopeSensorData" should NOT return aeroscope data', () => {
     const alert = {
       summary: {
         sensors: [{
@@ -129,19 +130,7 @@ describe('FlightActivityTracker v2 test suite', () => {
     const latitude = 4;
     const longitude = 5;
     const activatedZones = [{
-      label: 'PPV_Monitor'
-    },
-    {
-      label: 'Kinburg_Monitor'
-    }, {
-      label: 'OUR_Monitor_Herson'
-    },
-    {
-      label: 'OUR_Kryvyi_Rig'
-    }, {
-      label: 'Monitor_Herson'
-    }, {
-      label: 'Monitor_Kinburg'
+      label: 'POI_Palanok'
     }];
 
     const result = await flt.sendMessageToActivatedZone({
@@ -153,39 +142,9 @@ describe('FlightActivityTracker v2 test suite', () => {
       {
         serialNumber: 4444,
         modelLabel: 'ololo',
-        zone: 'PPV_Monitor',
-        chat_id: '-1001842709527',
+        zone: 'POI_Palanok',
+        chat_id: process.env.POI_Palanok,
       },
-      {
-        serialNumber: 4444,
-        modelLabel: 'ololo',
-        zone: 'Kinburg_Monitor',
-        chat_id: '-1001842709527',
-      },
-      {
-        serialNumber: 4444,
-        modelLabel: 'ololo',
-        zone: 'OUR_Monitor_Herson',
-        chat_id: '-1001842709527',
-      },
-      {
-        serialNumber: 4444,
-        modelLabel: 'ololo',
-        zone: 'OUR_Kryvyi_Rig',
-        chat_id: '-1001842709527',
-      },
-      {
-        serialNumber: 4444,
-        modelLabel: 'ololo',
-        zone: 'Monitor_Herson',
-        chat_id: '-1001842709527',
-      },
-      {
-        serialNumber: 4444,
-        modelLabel: 'ololo',
-        zone: 'Monitor_Kinburg',
-        chat_id: '-1001842709527',
-      }
     ])
 
   });

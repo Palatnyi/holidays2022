@@ -41,7 +41,6 @@ app.use(async (req, res, next) => {
   next();
 })
 
-
 app.post('/dedrone', async (req, res) => {
   let alertId = _.get(req, 'body.data.alertId');
   
@@ -55,21 +54,6 @@ app.post('/dedrone', async (req, res) => {
   const result = await flyTracker.sendMessagesV2(alertId);
   res.send({ result });
 });
-
-// app.post('/dedrone', async (req, res) => {
-//   let data = _.get(req.body, 'data', { msg: 'noData' });
-
-//   const { client } = dbCache;
-//   logger.info('new push event');
-//   await client.db('dedrone').collection('holidays2022test').insertOne({ ...req.body });
-//   return;
-
-//   flyTracker.sendMessages(data);
-
-
-//   res.send('<b>health: ok </b>');
-// });
-
 
 app.listen(PORT, async () => {
   console.log('summer_holidays_2022 is listening on port', PORT)
