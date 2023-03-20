@@ -43,7 +43,13 @@ app.use(async (req, res, next) => {
 
 app.post('/dedrone', async (req, res) => {
   let alertId = _.get(req, 'body.data.alertId');
-  
+
+  const timestamp = Date.now();
+  console.log('===START body.data===', `TIMESTAMP - ${timestamp}`);
+
+  console.log(_.get(req, 'body.data'));
+
+  console.log('===END body.data===', `TIMESTAMP - ${timestamp}`);
 
   if (!alertId) {
     logger.info(`push message does not contain alertId`);
