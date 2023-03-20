@@ -2,12 +2,6 @@ import _ from 'lodash';
 import logger from 'node-color-log';
 console.log('ENV:', process.env.CURRENT_ENV);
 
-const chats_ids_to_zones = process.env.CURRENT_ENV === 'TEST' ? {
-  'POI_Palanok': process.env.POI_Palanok
-} : {
-  'POI_Palanok': process.env.POI_Palanok
-};
-
 const chat_id = process.env.POI_Palanok
 
 class FlightActivityTracker {
@@ -80,27 +74,25 @@ class FlightActivityTracker {
     serialNumber,
   }) => {
     const result = [];
-      const time = new Date(timestamp).toLocaleString('uk', { timeZone: 'Europe/Kiev' });
+    const time = new Date(timestamp).toLocaleString('uk', { timeZone: 'Europe/Kiev' });
 
-        try {
-          await this._bot.sendMessage(
-            chat_id,
-            `❗️❗️❗️\n <b>Виявлено оператора ворожого БПЛА</b>\n \nЧас: ${time} \nКординати: <b>${latitude} ${longitude}</b>  \nМодель: ${modelLabel || ''} \nСерійний номер: ${serialNumber || ''}`,
-              this.getReplyMarkup({ longitude, latitude })
-          )
+    try {
+      result.push({
+        chat_id,
+        modelLabel,
+        serialNumber,
+      });
+      await this._bot.sendMessage(
+          chat_id,
+          `❗️❗️❗️\n <b>Виявлено оператора ворожого БПЛА</b>\n \nЧас: ${time} \nКординати: <b>${latitude} ${longitude}</b>  \nМодель: ${modelLabel || ''} \nСерійний номер: ${serialNumber || ''}`,
+          this.getReplyMarkup({ longitude, latitude })
+      )
+      logger.info(`Coordinates sent to the chat - ${chat_id}`)
 
-          logger.info(`Coordinates sent to the chat - ${chat_id}`)
-          result.push({
-            chat_id,
-            modelLabel,
-            zone: label,
-            serialNumber,
-          });
-
-        } catch (err) {
-          logger.error(`Failed to send message to the chat`);
-          console.log(err);
-        }
+    } catch (err) {
+      logger.error(`Failed to send message to the chat`);
+      console.log(err);
+    }
 
     return result;
   }

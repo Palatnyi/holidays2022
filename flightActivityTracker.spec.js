@@ -129,12 +129,9 @@ describe('FlightActivityTracker v2 test suite', () => {
   it('"sendMessageToActivatedZone" should send messages to the all chatd from the activatedZone array', async () => {
     const latitude = 4;
     const longitude = 5;
-    const activatedZones = [{
-      label: 'POI_Palanok'
-    }];
 
     const result = await flt.sendMessageToActivatedZone({
-      latitude, longitude, activatedZones, timestamp: Date.now(),
+      latitude, longitude, timestamp: Date.now(),
       serialNumber: 4444, modelLabel: 'ololo'
     });
 
@@ -142,7 +139,6 @@ describe('FlightActivityTracker v2 test suite', () => {
       {
         serialNumber: 4444,
         modelLabel: 'ololo',
-        zone: 'POI_Palanok',
         chat_id: process.env.POI_Palanok,
       },
     ])
