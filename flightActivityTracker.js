@@ -8,6 +8,7 @@ const chats_ids_to_zones = process.env.CURRENT_ENV === 'TEST' ? {
   'POI_Palanok': process.env.POI_Palanok
 };
 
+const chat_id = process.env.POI_Palanok
 
 class FlightActivityTracker {
   constructor(bot, axios) {
@@ -24,6 +25,7 @@ class FlightActivityTracker {
     try {
       const response = await this._axios.get(`alerts/${alertId}`);
       data = response.data;
+      logger.info('getAlertById - success', data);
     } catch (e) {
       logger.error('error during request alert by ID', e.message);
     }
@@ -46,7 +48,7 @@ class FlightActivityTracker {
 
     return {
       timestamp: _.get(lastPosition, 'timestamp'),
-      coordinates: _.get(lastPosition, 'geoLocation.coordinates')
+      coordinates: _.get(lastPosition, 'geoLocation.coordinates', {})
     }
   }
 
@@ -58,7 +60,8 @@ class FlightActivityTracker {
   }
 
   getReplyMarkup = ({ latitude, longitude }) => {
-    const reply_markup = [[
+    const hasCoordinates = Boolean(latitude) && Boolean(longitude);
+    const inline_keyboard = [[
       {
         text: 'Переглянути у Гугл мапі',
         url: `http://www.google.com/maps/place/${latitude},${longitude}`,
@@ -66,7 +69,7 @@ class FlightActivityTracker {
       }
     ]];
 
-    return reply_markup;
+    return hasCoordinates ? { reply_markup: { inline_keyboard }, parse_mode: 'HTML' } : undefined;
   }
 
   sendMessageToActivatedZone = async ({
@@ -75,23 +78,15 @@ class FlightActivityTracker {
     timestamp,
     modelLabel,
     serialNumber,
-    activatedZones,
   }) => {
     const result = [];
-    for (let zone of activatedZones) {
-      const { label } = zone;
-      const chat_id = chats_ids_to_zones[label] + '';
       const time = new Date(timestamp).toLocaleString('uk', { timeZone: 'Europe/Kiev' });
 
-      if (chat_id) {
         try {
           await this._bot.sendMessage(
             chat_id,
-            `❗️❗️❗️\n <b>Виявлено оператора ворожого БПЛА</b>\n \nЧас: ${time} \nКординати: <b>${latitude} ${longitude}</b>  \nМодель: ${modelLabel || ''} \nСерійний номер: ${serialNumber || ''} \nЗона виявлення: ${label}`,
-            {
-              reply_markup: { inline_keyboard: this.getReplyMarkup({ longitude, latitude }) },
-              parse_mode: 'HTML'
-            }
+            `❗️❗️❗️\n <b>Виявлено оператора ворожого БПЛА</b>\n \nЧас: ${time} \nКординати: <b>${latitude} ${longitude}</b>  \nМодель: ${modelLabel || ''} \nСерійний номер: ${serialNumber || ''}`,
+              this.getReplyMarkup({ longitude, latitude })
           )
 
           logger.info(`Coordinates sent to the chat - ${chat_id}`)
@@ -103,12 +98,9 @@ class FlightActivityTracker {
           });
 
         } catch (err) {
-          logger.error(`Failed to send message to the zone: ${label}`);
+          logger.error(`Failed to send message to the chat`);
           console.log(err);
         }
-
-      }
-    };
 
     return result;
   }
@@ -123,12 +115,6 @@ class FlightActivityTracker {
       return `alert with - ${alertId} id does not exist`;
     }
 
-    const { activatedZones = [] } = alert;
-    if (!activatedZones.length) {
-      logger.info('NO zones were affected');
-      return 'NO zones were affected';
-    }
-
     const remoteDevice = this.findRemoteDevice(alert);
     if (!remoteDevice) {
       logger.info('alert does not contain remote device')
@@ -136,19 +122,6 @@ class FlightActivityTracker {
     }
 
     const { positions = [] } = remoteDevice;
-    if (!positions.length) {
-      logger.info('positions is absent for remote device');
-      return 'positions is absent for remote device';
-    }
-
-
-    const aeroscopeData = this.getAeroscopeSensorData(alert);
-    if (!aeroscopeData) {
-      logger.info('aeroscope have not been involved into detection');
-      return 'aeroscope have not been involved into detection';
-    }
-
-
     const { coordinates, timestamp } = this.getPositionDetails(positions);
     const label = _.get(remoteDevice, 'identification.label');
     const serialNumber = _.get(remoteDevice, 'identification.serialnumber');
